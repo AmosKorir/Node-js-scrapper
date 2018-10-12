@@ -1,15 +1,13 @@
 var cheerio = require("cheerio");
 var request = require("request");
 var admin = require('firebase');
+var http=require('http');
+
 
 request("https://www.1960tips.com/", function(error, response, html) {
-  
-  var $=cheerio.load(html);
-  var array=[];
-  
-  
-
-      var count=0;
+   var $=cheerio.load(html);
+   var array=[];
+   var count=0;
      
     $('#tabletoday>tbody>tr').each(function(i, element){
         if (count!=0){
@@ -22,12 +20,7 @@ request("https://www.1960tips.com/", function(error, response, html) {
         count++;
     } )
     array.splice(-1,1);
-  
-  
-  
-   initfibase_db(array);
-     
- 
+    initfibase_db(array); 
 
 })
 
@@ -40,27 +33,20 @@ function initfibase_db(array){
   
     log("Firebase init");
      upload(array);
-
-
 }
+
 function upload(params){
     var db=admin.database();
-    var ref=db.ref('prediction/'+yyyymmdd());
-   
+    var ref=db.ref('prediction/'+yyyymmdd()); 
     var m=0;
     for(;m<params.length;){
         var setter=ref.push();
-
         if(params[m].time.trim()==="View More >"){
-            m=10000;
-           
+            m=10000;           
         }else{
-            setter.set(params[m]);
-           
-        }
-      
-     
-        m++;
+            setter.set(params[m]);          
+        }  
+    m++;
     }
   log("data uploaded");
   setTimeout(exitfun,15000,"exit");
@@ -71,7 +57,7 @@ function log(params){
 }
 
 function exitfun(){
-    process.exit(1);
+   // creaprocess.exit(1);
 }
 
 function yyyymmdd() {
